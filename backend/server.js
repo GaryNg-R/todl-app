@@ -46,4 +46,22 @@ app.post('/api/todos', (req, res) => {
   res.status(201).json(todo);
 });
 
+app.put('/api/todos/:id', (req, res) => {
+  const todos = readTodos();
+  const index = todos.findIndex(t => t.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Todo not found' });
+  todos[index] = { ...todos[index], ...req.body };
+  writeTodos(todos);
+  res.json(todos[index]);
+});
+
+app.delete('/api/todos/:id', (req, res) => {
+  const todos = readTodos();
+  const index = todos.findIndex(t => t.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Todo not found' });
+  todos.splice(index, 1);
+  writeTodos(todos);
+  res.status(204).end();
+});
+
 app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));

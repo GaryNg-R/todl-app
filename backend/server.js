@@ -25,4 +25,25 @@ app.get('/api/todos', (req, res) => {
   res.json(readTodos());
 });
 
+app.post('/api/todos', (req, res) => {
+  const { title, notes, priority, status, dueDate, tags } = req.body;
+  if (!title || !title.trim()) {
+    return res.status(400).json({ error: 'Title is required' });
+  }
+  const todo = {
+    id: uuidv4(),
+    title: title.trim(),
+    notes: notes || '',
+    priority: priority || 'medium',
+    status: status || 'todo',
+    dueDate: dueDate || null,
+    tags: tags || [],
+    createdAt: new Date().toISOString()
+  };
+  const todos = readTodos();
+  todos.push(todo);
+  writeTodos(todos);
+  res.status(201).json(todo);
+});
+
 app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));
